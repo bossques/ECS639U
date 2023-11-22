@@ -14,7 +14,7 @@ To run this project in your development machine, follow these steps:
     $ git clone https://github.qmul.ac.uk/<username>/cwgroup
     ```
 
-3. Install Pyhton dependencies (main folder):
+3. Install Python dependencies (main folder):
 
     ```console
     $ pip install -r requirements.txt
