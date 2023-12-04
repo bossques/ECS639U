@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/static/api/spa/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ECS639 Web Programming - Group CW Template</title>
+    <script type="module" crossorigin src="/static/api/spa/assets/index-310333cf.js"></script>
+    <link rel="stylesheet" href="/static/api/spa/assets/index-4e5c0698.css">
+</head>
+<body>
+
+<div class="jumbotron d-flex align-items-center min-vh-100">
+    <div class="container col-sm-4">
+        <form method="post" action="{% url 'register' %}" enctype="multipart/form-data" class="card">
+            {% csrf_token %}
+
+            <div class="card-body">
+                <div class="form-group p-2">
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+
+                    {% if form.errors.username %}
+                    <p>{{ form.errors.username }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="form-group p-2">
+                    {{ form.profile_image.label_tag }}
+                    {{ form.profile_image }}
+
+                    {% if form.errors.profile_image %}
+                    <p>{{ form.errors.profile_image }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="form-group p-2">
+                    {{ form.date_of_birth.label_tag }}
+                    {{ form.date_of_birth }}
+
+                    {% if form.errors.date_of_birth %}
+                    <p>{{ form.errors.date_of_birth }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="row p-2">
+                    <div class="col form-group">
+                        {{ form.password1.label_tag }}
+                        {{ form.password1 }}
+
+                        {% if form.errors.password1 %}
+                        <p>{{ form.errors.password1 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="col form-group">
+                        {{ form.password2.label_tag }}
+                        {{ form.password2 }}
+
+                        {% if form.errors.password2 %}
+                        <p>{{ form.errors.password2 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer p-2">
+                <input type="submit" class="btn btn-success w-100" value="Register">
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
