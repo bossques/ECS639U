@@ -1,19 +1,13 @@
 <template>
-  <div class="h1">
-    {{ title }}
-  </div>
+    <div v-for="article in articleStore.articles">
+        <Article :article="article" />
+    </div>
 </template>
 
-<script lang="ts">
-    import { defineComponent } from "vue";
-
-    export default defineComponent({
-        data() {
-            return {
-                title: "Main Page",
-            }
-        }
-    })
+<script setup lang="ts">
+import { useArticleStore } from "@/store/articles.ts";
+import Article from "@/components/Article.vue";
+const articleStore = useArticleStore()
 </script>
 
 <style scoped>

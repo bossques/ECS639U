@@ -1,10 +1,12 @@
 from django.contrib.auth import login, logout
-from django.http import HttpResponse, HttpRequest, JsonResponse, QueryDict
+from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
+from django.core.serializers import serialize
 
 from .forms import LoginForm, RegisterForm, ModifyForm
+from .models import Article
 
 
 def main_spa(request: HttpRequest) -> HttpResponse:
@@ -58,6 +60,13 @@ def profile_view(request: HttpRequest) -> HttpResponse:
             return JsonResponse(status=200, data=serialize_user(request))
         else:
             return JsonResponse(status=400, data=form.errors.as_json(), safe=False)
+
+
+@require_http_methods(['GET'])
+def article_view(request: HttpRequest) -> HttpResponse:
+    articles = Article.objects.order_by('created_at')
+    articles = [article.to_dict() for article in articles]
+    return JsonResponse(status=200, data=articles, safe=False)
 
 
 def serialize_user(request: HttpRequest):
