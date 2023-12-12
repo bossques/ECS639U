@@ -29,14 +29,23 @@
     </nav>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import { useUserStore } from "@/store/userStore";
 import { useRouter } from "vue-router";
 
-const userStore = useUserStore();
-const router = useRouter();
-const onLogout = () => {
-    userStore.logout();
-    router.replace({'name': 'Main Page'})
+export default {
+    data() {
+        const userStore = useUserStore()
+        const router = useRouter()
+
+        return {
+            userStore,
+            router,
+            onLogout: () => {
+                userStore.logout();
+                router.replace({'name': 'Main Page'})
+            }
+        }
+    }
 }
 </script>
