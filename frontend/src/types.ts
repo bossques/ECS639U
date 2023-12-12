@@ -10,7 +10,8 @@ export type User = {
     email: string
     username: string
     date_of_birth: string
-    profile_url?: string | null
+    profile_url?: string | null,
+    favourite_categories: ArticleCategory[]
 }
 
 export type ArticleCategory = {

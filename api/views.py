@@ -1,12 +1,13 @@
+import json
+
 from django.contrib.auth import login, logout
 from django.http import HttpResponse, HttpRequest, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
-from django.core.serializers import serialize
 
 from .forms import LoginForm, RegisterForm, ModifyForm
-from .models import Article
+from .models import Article, ArticleCategory
 
 
 def main_spa(request: HttpRequest) -> HttpResponse:
@@ -62,11 +63,34 @@ def profile_view(request: HttpRequest) -> HttpResponse:
             return JsonResponse(status=400, data=form.errors.as_json(), safe=False)
 
 
+@require_http_methods(['PUT'])
+def category_view(request: HttpRequest, category_id: int) -> HttpResponse:
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    category = get_object_or_404(ArticleCategory, id=category_id)
+
+    favourite_categories = request.user.favourite_categories
+    if category in favourite_categories.all():
+        favourite_categories.remove(category)
+    else:
+        favourite_categories.add(category)
+
+    return JsonResponse(status=200, data=serialize_user(request))
+
 @require_http_methods(['GET'])
 def article_view(request: HttpRequest) -> HttpResponse:
     articles = Article.objects.order_by('created_at')
     articles = [article.to_dict() for article in articles]
-    return JsonResponse(status=200, data=articles, safe=False)
+
+    categories = ArticleCategory.objects.all()
+    categories = [category.to_dict() for category in categories]
+
+    response = {
+        'categories': categories,
+        'articles': articles
+    }
+
+    return JsonResponse(status=200, data=response, safe=False)
 
 
 def serialize_user(request: HttpRequest):
@@ -79,5 +103,6 @@ def serialize_user(request: HttpRequest):
         'username': request.user.username,
         'email': request.user.email,
         'profile_url': profile_url,
-        'date_of_birth': request.user.date_of_birth
+        'date_of_birth': request.user.date_of_birth,
+        'favourite_categories': list(request.user.favourite_categories.values('id', 'name'))
     }

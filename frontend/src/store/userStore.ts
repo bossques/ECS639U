@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { BadRequestResponse, User } from "@/types.ts";
+import type {ArticleCategory, BadRequestResponse, User} from "@/types.ts";
 
 export const useUserStore = defineStore('user', {
     state: () => {
@@ -40,6 +40,23 @@ export const useUserStore = defineStore('user', {
             } else {
                 const json: BadRequestResponse = await response.json()
                 throw new BadRequestError(json)
+            }
+        },
+        async toggleCategory(category: ArticleCategory) {
+            // if csrf token is found in cookies, add to header
+            const headers: Record<string, string> = {};
+            const token = getCookie('csrftoken')
+            if (token !== undefined) {
+                headers['X-CSRFToken'] = token;
+            }
+
+            const response = await fetch(`http://127.0.0.1:8000/api/profile/categories/${category.id}/`, {
+                'method': 'PUT',
+                'headers': headers
+            })
+
+            if (response.ok) {
+                this.user = await response.json()
             }
         },
         async logout() {

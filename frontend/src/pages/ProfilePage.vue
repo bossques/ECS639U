@@ -1,47 +1,75 @@
 <template>
-    <div class="container col-sm-6">
-        <div v-if="saved" class="alert alert-success" role="alert">
-            Your changes have been saved.
+    <div class="row">
+        <div class="container col-sm-6">
+            <div v-if="saved" class="alert alert-success" role="alert">
+                Your changes have been saved.
+            </div>
+
+            <form class="card" @submit.prevent="onSubmit" @dragover.prevent="(event: DragEvent) => { event.preventDefault() }" @drop.prevent="onDrop">
+                <div class="card-body">
+                    <div class="form-group p-2">
+                        <label>Profile Picture:</label>
+
+                        <div class="text-center rounded p-2">
+                            <img v-if="profileUrl" :src="profileUrl" alt="Profile Image" @click="onProfileClick" class="img-fluid col-sm-4">
+                        </div>
+                        <input type="file" @change="onFileChange" alt="Profile Image" class="form-control-file" accept="image/*" ref="fileInputRef">
+                    </div>
+                    <Error :error-messages="errors?.profile_image"/>
+
+                    <div class="form-group p-2">
+                        <label>Email Address:</label>
+                        <input type="email" v-model="form.email" class="form-control">
+                    </div>
+                    <Error :error-messages="errors?.email"/>
+
+                    <div class="form-group p-2">
+                        <label>Date Of Birth:</label>
+                        <input type="date" v-model="form.dateOfBirth" class="form-control">
+                    </div>
+                    <Error :error-messages="errors?.date_of_birth"/>
+                </div>
+
+                <div class="card-footer">
+                    <input type="submit" class="btn btn-success w-100" value="Save" />
+                </div>
+            </form>
         </div>
 
-        <form class="card" @submit.prevent="onSubmit" @dragover.prevent="(event: DragEvent) => { event.preventDefault() }" @drop.prevent="onDrop">
-            <div class="card-body">
-                <div class="form-group p-2">
-                    <label>Profile Picture:</label>
+        <div class="container col-sm-3">
+            <div class="card">
 
-                    <div class="text-center rounded p-2">
-                        <img v-if="profileUrl" :src="profileUrl" alt="Profile Image" @click="onProfileClick" class="img-fluid col-sm-4">
+                <div class="card-title">
+                    Your Favourite Categories
+                </div>
+
+                <div class="card-body">
+                    <div v-for="category in articleStore.categories" :key="category.id">
+                    <div class="form-check form-switch">
+                        <input
+                            type="checkbox"
+                            :value="category.id"
+                            :checked="isCategorySelected(category)"
+                            class="form-check-input"
+                            @click.stop="onSwitchToggle($event, category)" />
+
+                        <label>{{ category.name }}</label>
                     </div>
-                    <input type="file" @change="onFileChange" alt="Profile Image" class="form-control-file" accept="image/*" ref="fileInputRef">
                 </div>
-                <Error :error-messages="errors?.profile_image"/>
-
-                <div class="form-group p-2">
-                    <label>Email Address:</label>
-                    <input type="email" v-model="form.email" class="form-control">
                 </div>
-                <Error :error-messages="errors?.email"/>
-
-                <div class="form-group p-2">
-                    <label>Date Of Birth:</label>
-                    <input type="date" v-model="form.dateOfBirth" class="form-control">
-                </div>
-                <Error :error-messages="errors?.date_of_birth"/>
             </div>
-
-            <div class="card-footer">
-                <input type="submit" class="btn btn-success w-100" value="Save" />
-            </div>
-        </form>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { Ref, ref } from "vue";
 import { BadRequestError, useUserStore } from "@/store/userStore";
-import type { BadRequestResponse } from "@/types.ts";
+import type {ArticleCategory, BadRequestResponse} from "@/types.ts";
 import Error from "@/components/Error.vue";
+import {useArticleStore} from "@/store/articles.ts";
 const userStore = useUserStore();
+const articleStore = useArticleStore();
 const profileUrl = ref(userStore.user?.profile_url ?? null)
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const errors = ref<BadRequestResponse>({});
@@ -98,6 +126,16 @@ const onSubmit = async () => {
         }
         throw e
     }
+}
+
+const isCategorySelected = (category: ArticleCategory) => {
+    const result = userStore.user?.favourite_categories?.find((c) => c.id === category.id)
+    return result !== undefined;
+}
+
+const onSwitchToggle = (event: Event, category: ArticleCategory) => {
+    event.preventDefault()
+    userStore.toggleCategory(category)
 }
 
 </script>

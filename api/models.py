@@ -4,13 +4,6 @@ from django.utils.timezone import now
 
 
 # Create your models here.
-
-class User(AbstractUser):
-    profile_image = models.ImageField(null=True)
-    date_of_birth = models.DateField(default=now)
-    email = models.EmailField(unique=True)
-
-
 class ArticleCategory(models.Model):
     name = models.CharField(unique=True, max_length=128)
 
@@ -19,6 +12,14 @@ class ArticleCategory(models.Model):
             'id': self.id,
             'name': self.name
         }
+
+
+class User(AbstractUser):
+    profile_image = models.ImageField(null=True)
+    date_of_birth = models.DateField(default=now)
+    email = models.EmailField(unique=True)
+    favourite_categories = models.ManyToManyField(ArticleCategory, related_name="favourite_by", default=[])
+
 
 
 class Article(models.Model):
