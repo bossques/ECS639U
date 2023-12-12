@@ -1,33 +1,24 @@
 <template>
+    <NavigationBar />
     <main class="container pt-4">
-        <div>
-            <router-link
-                class=""
-                :to="{name: 'Main Page'}"
-            >
-                Main Page
-            </router-link>
-            |
-            <router-link
-                class=""
-                :to="{name: 'Other Page'}"
-            >
-                Other Page
-            </router-link>
-        </div>
         <RouterView class="flex-shrink-0" />
     </main>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
 import { RouterView } from "vue-router";
+import NavigationBar from "./components/NavigationBar.vue";
+import { useUserStore } from "@/store/userStore";
 
-export default defineComponent({
-    components: { RouterView },
-});
+export default {
+    components: {
+        NavigationBar,
+        RouterView
+    },
+    async mounted() {
+        const userStore = useUserStore()
+        await userStore.populate()
+    }
+}
 
 </script>
-
-<style scoped>
-</style>

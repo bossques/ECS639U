@@ -8,3 +8,4 @@ from django.utils.timezone import now
 class User(AbstractUser):
     profile_image = models.ImageField(null=True)
     date_of_birth = models.DateField(default=now)
+    email = models.EmailField(unique=True)
