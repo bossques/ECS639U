@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import type { BadRequestResponse, User } from "@/types.ts";
 
 export const useUserStore = defineStore('user', {
     state: () => {
@@ -13,14 +14,32 @@ export const useUserStore = defineStore('user', {
                 this.user = await response.json()
             }
         },
-        async modify(formData: FormData) {
+        async modify(email: string, dateOfBirth: string, profileImage: File | null) {
+            // if csrf token is found in cookies, add to header
+            const headers: Record<string, string> = {};
+            const token = getCookie('csrftoken')
+            if (token !== undefined) {
+                headers['X-CSRFToken'] = token;
+            }
+
+            const formData = new FormData()
+            formData.append('email', email)
+            formData.append('date_of_birth', dateOfBirth)
+            if (profileImage != null) {
+                formData.append('profile_image', profileImage, profileImage.name)
+            }
+
             const response = await fetch('http://127.0.0.1:8000/api/profile/', {
-                'method': 'PUT',
+                'method': 'POST',
+                'headers': headers,
                 'body': formData
             })
 
             if(response.ok) {
                 this.user = await response.json()
+            } else {
+                const json: BadRequestResponse = await response.json()
+                throw new BadRequestError(json)
             }
         },
         async logout() {
@@ -43,6 +62,16 @@ export const useUserStore = defineStore('user', {
     }
 })
 
+export class BadRequestError extends Error {
+    public readonly errors: BadRequestResponse;
+
+    constructor(errors: BadRequestResponse) {
+        super(errors.toString());
+        this.name = "BadRequestError"
+        this.errors = errors
+    }
+}
+
 function getCookie(name: string): string | undefined {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -50,10 +79,4 @@ function getCookie(name: string): string | undefined {
         return parts.pop()?.split(';').shift()?.trim();
     }
     return undefined;
-}
-
-interface User {
-    id: Number
-    username: String
-    profile_url?: String
 }

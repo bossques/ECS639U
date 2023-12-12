@@ -1,10 +1,10 @@
 from django.contrib.auth import login, logout
-from django.http import HttpResponse, HttpRequest, JsonResponse
+from django.http import HttpResponse, HttpRequest, JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ModifyForm
 
 
 def main_spa(request: HttpRequest) -> HttpResponse:
@@ -44,21 +44,31 @@ def logout_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse(status=200)
 
 
-@require_http_methods(['GET', 'PUT'])
+@require_http_methods(['GET', 'POST'])
 def profile_view(request: HttpRequest) -> HttpResponse:
     if not request.user.is_authenticated:
         return HttpResponse(status=401)
 
     if request.method == 'GET':
-        profile_url = request.build_absolute_uri(
-            settings.MEDIA_URL + str(request.user.profile_image)
-        ) if request.user.profile_image else None
-
-        json = {
-            'id': request.user.id,
-            'username': request.user.username,
-            'profile_url': profile_url
-        }
-        return JsonResponse(status=200, data=json)
+        return JsonResponse(status=200, data=serialize_user(request))
     else:
-        return HttpResponse(status=200)
+        form = ModifyForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return JsonResponse(status=200, data=serialize_user(request))
+        else:
+            return JsonResponse(status=400, data=form.errors.as_json(), safe=False)
+
+
+def serialize_user(request: HttpRequest):
+    profile_url = request.build_absolute_uri(
+        settings.MEDIA_URL + str(request.user.profile_image)
+    ) if request.user.profile_image else None
+
+    return {
+        'id': request.user.id,
+        'username': request.user.username,
+        'email': request.user.email,
+        'profile_url': profile_url,
+        'date_of_birth': request.user.date_of_birth
+    }

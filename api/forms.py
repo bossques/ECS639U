@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.forms import DateField, ImageField, DateInput, ClearableFileInput, EmailField, EmailInput
+from django.forms import DateField, ImageField, DateInput, ClearableFileInput, EmailField, EmailInput, ModelForm
 
 from .models import User
 
@@ -14,9 +14,14 @@ class RegisterForm(UserCreationForm):
         widget=ClearableFileInput(attrs={'class': 'form-control-file'}),
         required=False
     )
+    email = EmailField(
+        label="Email Address",
+        widget=EmailInput(attrs={'class': 'form-control', 'type': 'email'}),
+        required=True
+    )
 
     class Meta:
-        fields = UserCreationForm.Meta.fields + ('date_of_birth', 'profile_image')
+        fields = UserCreationForm.Meta.fields + ('date_of_birth', 'profile_image', 'email')
         model = User
 
     def __init__(self, *args, **kwargs):
@@ -31,3 +36,13 @@ class LoginForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'form-control'})
         self.fields['password'].widget.attrs.update({'class': 'form-control'})
+
+
+class ModifyForm(ModelForm):
+    date_of_birth = DateField(required=False)
+    profile_image = ImageField(required=False)
+    email = EmailField(required=False)
+
+    class Meta:
+        fields = ['date_of_birth', 'profile_image', 'email']
+        model = User
