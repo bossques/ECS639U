@@ -12,7 +12,7 @@
                     <div class="text-center rounded p-2">
                         <img v-if="profileUrl" :src="profileUrl" alt="Profile Image" @click="onProfileClick" class="img-fluid col-sm-4">
                     </div>
-                    <input type="file" @change="onFileChange" alt="Profile Image" class="form-control-file d-none" accept="image/*" ref="fileInputRef">
+                    <input type="file" @change="onFileChange" alt="Profile Image" class="form-control-file" accept="image/*" ref="fileInputRef">
                 </div>
                 <Error :error-messages="errors?.profile_image"/>
 
