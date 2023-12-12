@@ -21,12 +21,11 @@ class User(AbstractUser):
     favourite_categories = models.ManyToManyField(ArticleCategory, related_name="favourite_by", default=[])
 
 
-
 class Article(models.Model):
     category = models.ForeignKey(ArticleCategory, on_delete=models.CASCADE)
     title = models.CharField(null=False, max_length=256)
     contents = models.CharField(null=False, max_length=2048)
-    created_at = models.DateField(default=now)
+    created_at = models.DateTimeField(default=now)
 
     def to_dict(self):
         return {
@@ -43,7 +42,7 @@ class ArticleComment(models.Model):
     belongs_to = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.CharField(null=False, max_length=512)
     reply_to = models.ForeignKey("ArticleComment", null=True, default=None, on_delete=models.CASCADE)
-    created_at = models.DateField(default=now)
+    created_at = models.DateTimeField(default=now)
 
     def to_dict(self):
         return {

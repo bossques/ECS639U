@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth import login, logout
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -76,6 +74,7 @@ def category_view(request: HttpRequest, category_id: int) -> HttpResponse:
         favourite_categories.add(category)
 
     return JsonResponse(status=200, data=serialize_user(request))
+
 
 @require_http_methods(['GET'])
 def article_view(request: HttpRequest) -> HttpResponse:

@@ -39,9 +39,9 @@ class LoginForm(AuthenticationForm):
 
 
 class ModifyForm(ModelForm):
-    date_of_birth = DateField(required=False)
+    date_of_birth = DateField(required=True)
     profile_image = ImageField(required=False)
-    email = EmailField(required=False)
+    email = EmailField(required=True)
 
     class Meta:
         fields = ['date_of_birth', 'profile_image', 'email']
