@@ -16,7 +16,7 @@
                         <div class="text-center profile-picture rounded border">
                             <img
                                 v-if="profileUrl"
-                                :src="profileUrl"
+                                :src="getUrl() + 'media/' + profileUrl"
                                 alt="Profile Image"
                                 class="profile-picture rounded"/>
                         </div>
@@ -69,6 +69,7 @@ import { useArticleStore } from "@/store/articleStore.ts";
 import { BadRequestError, useUserStore } from "@/store/userStore.ts";
 import { ArticleCategory, BadRequestResponse } from "@/types.ts";
 import Error from "@/components/Error.vue";
+import { getUrl } from "@/utils.ts";
 
 type ExtendedArticleCategory = ArticleCategory & { enabled: boolean; }
 type Form = { profileImage: File | null, email: string, dateOfBirth: string }
@@ -86,7 +87,7 @@ export default defineComponent({
             dateOfBirth: userStore.user?.date_of_birth ?? ''
         })
         const formErrors = ref<BadRequestResponse>({})
-        const profileUrl = ref(userStore.user?.profile_url ?? null)
+        const profileUrl = ref(userStore.user?.profile_image ?? null)
         const saved = ref(false);
 
         return {
@@ -108,6 +109,7 @@ export default defineComponent({
         }
     },
     methods: {
+        getUrl,
         onCategoryToggle(category: ArticleCategory) {
             useUserStore().toggleCategory(category)
         },

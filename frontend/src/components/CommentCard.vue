@@ -6,8 +6,8 @@
         @mouseleave="isHovered = false" >
         <div class="profile-picture rounded border">
             <img
-                :src="comment.belongs_to.profile_url"
-                v-if="comment.belongs_to.profile_url"
+                :src="getUrl() + 'media/' + comment.belongs_to.profile_image"
+                v-if="comment.belongs_to.profile_image"
                 alt="Profile Image"
                 class="profile-picture rounded" />
         </div>
@@ -68,6 +68,7 @@
 import { ArticleComment, NestedArticleComment } from "@/types.ts";
 import { useUserStore } from "@/store/userStore.ts";
 import { PropType } from "vue";
+import { getUrl } from "@/utils.ts";
 export default {
     data() {
         return {
@@ -105,6 +106,7 @@ export default {
         }
     },
     methods: {
+        getUrl,
         formatDate(datetimeString: string) {
             const datetime = new Date(datetimeString)
             const options: Intl.DateTimeFormatOptions = {year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'}

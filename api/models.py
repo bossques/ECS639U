@@ -25,7 +25,7 @@ class User(AbstractUser):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'profile_image': str(self.profile_image),
+            'profile_image': str(self.profile_image) if self.profile_image else None,
             'date_of_birth': self.date_of_birth,
             'favourite_categories': list(self.favourite_categories.values('id', 'name'))
         }
@@ -54,17 +54,14 @@ class ArticleComment(models.Model):
     reply_to = models.ForeignKey("ArticleComment", null=True, default=None, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=now)
 
-    def to_dict(self, exclude: list[str] = None):
-        if exclude is None:
-            exclude = []
-
+    def to_dict(self):
         data = {
             'id': self.id,
-            'article': self.article.to_dict() if 'article' not in exclude and self.article is not None else None,
-            'belongs_to': self.belongs_to.to_dict() if 'belongs_to' not in exclude and self.belongs_to is not None else None,
-            'comment': self.comment if 'comment' not in exclude else None,
-            'reply_to': self.reply_to.to_dict() if 'reply_to' not in exclude and self.reply_to is not None else None,
-            'created_at': self.created_at if 'created_at' not in exclude else None,
+            'article': self.article.to_dict(),
+            'belongs_to': self.belongs_to.to_dict(),
+            'comment': self.comment,
+            'reply_to': self.reply_to.to_dict() if self.reply_to else None,
+            'created_at': self.created_at
         }
 
         return {key: value for key, value in data.items() if value is not None}

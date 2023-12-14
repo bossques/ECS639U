@@ -63,7 +63,7 @@ export default {
             return useArticleStore().articles.find((article) => article.id == this.id )
         },
         viewableComments(): NestedArticleComment[] {
-            const viewable = this.comments.filter(comment => comment.reply_to === null) as NestedArticleComment[]
+            const viewable = this.comments.filter(c => c.reply_to === undefined) as NestedArticleComment[]
             viewable.forEach(comment => { comment.replies = this.buildCommentTree(comment) })
             return viewable
         },

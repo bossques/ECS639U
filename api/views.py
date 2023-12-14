@@ -53,12 +53,12 @@ def profile_view(request: HttpRequest) -> HttpResponse:
         return HttpResponse(status=401)
 
     if request.method == 'GET':
-        return JsonResponse(status=200, data=serialize_user(request.user, request))
+        return JsonResponse(status=200, data=request.user.to_dict())
     else:
         form = ModifyForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return JsonResponse(status=200, data=serialize_user(request.user, request))
+            return JsonResponse(status=200, data=request.user.to_dict())
         else:
             return JsonResponse(status=400, data=form.errors.as_json(), safe=False)
 
@@ -75,7 +75,7 @@ def category_view(request: HttpRequest, category_id: int) -> HttpResponse:
     else:
         favourite_categories.add(category)
 
-    return JsonResponse(status=200, data=serialize_user(request.user, request))
+    return JsonResponse(status=200, data=request.user.to_dict())
 
 
 @require_http_methods(['GET'])
@@ -100,7 +100,7 @@ def article_view(request: HttpRequest, article_id: int) -> HttpResponse:
     comments = ArticleComment.objects.filter(article=article).order_by('-created_at')
 
     response = article.to_dict()
-    response['comments'] = [serialize_comment(comment, request) for comment in comments]
+    response['comments'] = [comment.to_dict() for comment in comments]
 
     return JsonResponse(status=200, data=response, safe=False)
 
@@ -128,7 +128,7 @@ def comments_view(request: HttpRequest, article_id: int):
     )
     article_comment.save()
 
-    return JsonResponse(status=200, data=serialize_comment(article_comment, request), safe=False)
+    return JsonResponse(status=200, data=article_comment.to_dict(), safe=False)
 
 
 @require_http_methods(['PUT', 'DELETE'])
@@ -151,31 +151,3 @@ def comment_view(request: HttpRequest, article_id: int, comment_id: int):
         article_comment.delete()
         return HttpResponse(status=200)
 
-
-def serialize_user(user: User, request: HttpRequest):
-    profile_url = request.build_absolute_uri(
-        settings.MEDIA_URL + str(user.profile_image)
-    ) if user.profile_image else None
-
-    if request.is_secure() and profile_url and profile_url.startswith('http://'):
-        profile_url = profile_url.replace('http://', 'https://')
-
-    return {
-        'id': user.id,
-        'username': user.username,
-        'email': user.email,
-        'profile_url': profile_url,
-        'date_of_birth': user.date_of_birth,
-        'favourite_categories': list(user.favourite_categories.values('id', 'name'))
-    }
-
-
-def serialize_comment(comment: ArticleComment, request: HttpRequest):
-    return {
-        'id': comment.id,
-        'article': comment.article.to_dict(),
-        'belongs_to': serialize_user(comment.belongs_to, request),
-        'comment': comment.comment,
-        'reply_to': comment.reply_to.to_dict() if comment.reply_to else None,
-        'created_at': comment.created_at
-    }
