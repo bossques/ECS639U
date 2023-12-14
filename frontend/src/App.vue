@@ -9,7 +9,7 @@
 import { RouterView } from "vue-router";
 import NavigationBar from "./components/NavigationBar.vue";
 import { useUserStore } from "@/store/userStore";
-import { useArticleStore } from "@/store/articles.ts";
+import { useArticleStore } from "@/store/articleStore.ts";
 
 export default {
     components: {

@@ -35,8 +35,8 @@
 
 <script lang="ts">
 import { Article, ArticleComment, NestedArticleComment } from "@/types.ts";
-import { useArticleStore } from "@/store/articles.ts";
-import { getHeaders } from "@/utils.ts";
+import { useArticleStore } from "@/store/articleStore.ts";
+import { getHeaders, getUrl } from "@/utils.ts";
 import CommentCreateModal from "@/components/CommentCreateModal.vue";
 import CommentCard from "@/components/CommentCard.vue";
 import CommentEditModal from "@/components/CommentEditModal.vue";
@@ -78,7 +78,7 @@ export default {
                 body['reply_to'] = this.reply_to.id
             }
 
-            const response = await fetch(`http://127.0.0.1:8000/api/articles/${this.id}/comments/`, {
+            const response = await fetch(getUrl() + `api/articles/${this.id}/comments/`, {
                 'method': 'POST',
                 'body': JSON.stringify(body),
                 'headers': getHeaders()
@@ -89,7 +89,7 @@ export default {
             }
         },
         async editComment(comment: string) {
-            const response = await fetch(`http://127.0.0.1:8000/api/articles/${this.id}/comments/${this.editing!.id}/`, {
+            const response = await fetch(getUrl() + `api/articles/${this.id}/comments/${this.editing!.id}/`, {
                 'method': 'PUT',
                 body: JSON.stringify({'comment': comment}),
                 headers: getHeaders()
@@ -102,7 +102,7 @@ export default {
             }
         },
         async deleteComment(id: number) {
-            const response = await fetch(`http://127.0.0.1:8000/api/articles/${this.id}/comments/${id}/`, {
+            const response = await fetch(getUrl() + `api/articles/${this.id}/comments/${id}/`, {
                 'method': 'DELETE',
                 'headers': getHeaders()
             })
@@ -146,7 +146,7 @@ export default {
         }
     },
     async mounted() {
-        const response = await fetch(`http://127.0.0.1:8000/api/articles/${this.id}/`)
+        const response = await fetch(getUrl() + `api/articles/${this.id}/`)
         if (response.ok) {
             const json = await response.json()
             this.comments = json['comments']

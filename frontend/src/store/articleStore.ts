@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type { Article, ArticleCategory } from "@/types.ts";
+import {getUrl} from "@/utils.ts";
 
 export const useArticleStore = defineStore('article', {
     state: () => {
@@ -10,7 +11,7 @@ export const useArticleStore = defineStore('article', {
     },
     actions: {
         async populate() {
-            const response = await fetch('http://127.0.0.1:8000/api/articles/')
+            const response = await fetch(getUrl() + 'api/articles/')
             if (response.ok) {
                 const json = await response.json()
                 this.articles = json['articles']

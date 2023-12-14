@@ -22,3 +22,7 @@ export function getHeaders(): Record<string, string> {
     return headers
 }
 
+export function getUrl() {
+    return window.location.toString()
+}
+

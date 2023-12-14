@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useArticleStore } from "@/store/articles.ts";
+import { useArticleStore } from "@/store/articleStore.ts";
 import { useUserStore } from "@/store/userStore.ts";
 import { Article } from "@/types.ts";
 import ArticleCard from "@/components/ArticleCard.vue";

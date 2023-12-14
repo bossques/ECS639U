@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import type {ArticleCategory, BadRequestResponse, User} from "@/types.ts";
-import { getHeaders } from "@/utils.ts";
+import { getHeaders, getUrl } from "@/utils.ts";
 
 export const useUserStore = defineStore('user', {
     state: () => {
@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', {
     },
     actions: {
         async populate() {
-            const response = await fetch('http://127.0.0.1:8000/api/profile/')
+            const response = await fetch(getUrl() + 'api/profile/')
             if (response.ok) {
                 this.user = await response.json()
             }
@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', {
                 formData.append('profile_image', profileImage, profileImage.name)
             }
 
-            const response = await fetch('http://127.0.0.1:8000/api/profile/', {
+            const response = await fetch(getUrl() + 'api/profile/', {
                 'method': 'POST',
                 'headers': headers,
                 'body': formData
@@ -41,7 +41,7 @@ export const useUserStore = defineStore('user', {
         async toggleCategory(category: ArticleCategory) {
             const headers = getHeaders()
 
-            const response = await fetch(`http://127.0.0.1:8000/api/profile/categories/${category.id}/`, {
+            const response = await fetch(getUrl() + `api/profile/categories/${category.id}/`, {
                 'method': 'PUT',
                 'headers': headers
             })
@@ -53,7 +53,7 @@ export const useUserStore = defineStore('user', {
         async logout() {
             const headers = getHeaders()
 
-            const response = await fetch('http://127.0.0.1:8000/auth/logout/', {
+            const response = await fetch(getUrl() + 'auth/logout/', {
                 'method': 'POST',
                 'headers': headers
             })

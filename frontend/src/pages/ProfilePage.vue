@@ -65,7 +65,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useArticleStore } from "@/store/articles.ts";
+import { useArticleStore } from "@/store/articleStore.ts";
 import { BadRequestError, useUserStore } from "@/store/userStore.ts";
 import { ArticleCategory, BadRequestResponse } from "@/types.ts";
 import Error from "@/components/Error.vue";
