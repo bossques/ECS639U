@@ -16,8 +16,11 @@
             v-if="loggedIn" />
     </div>
 
-    <div v-for="comment in viewableComments">
+    <div v-for="comment in viewableComments" v-if="!isLoading">
         <CommentCard :comment="comment" @delete="deleteComment" @edit="onEdit" @reply="onReply" />
+    </div>
+    <div v-else>
+        <p>Loading...</p>
     </div>
 
     <CommentCreateModal :reply_to="reply_to" @create-comment="createComment" @close="reply_to = null" id="createCommentModal"/>
@@ -52,7 +55,8 @@ export default {
         return {
             comments: [] as ArticleComment[],
             reply_to: null as ArticleComment | null,
-            editing: null as ArticleComment | null
+            editing: null as ArticleComment | null,
+            isLoading: true
         }
     },
     computed: {
@@ -150,6 +154,7 @@ export default {
         if (response.ok) {
             const json = await response.json()
             this.comments = json['comments']
+            this.isLoading = false
         }
     }
 }
