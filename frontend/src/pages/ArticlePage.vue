@@ -12,7 +12,8 @@
             data-bs-toggle="modal"
             data-bs-target="#createCommentModal"
             value="Comment"
-            ref="createCommentModal" />
+            ref="createCommentModal"
+            v-if="loggedIn" />
     </div>
 
     <div v-for="comment in viewableComments">
@@ -39,6 +40,7 @@ import { getHeaders } from "@/utils.ts";
 import CommentCreateModal from "@/components/CommentCreateModal.vue";
 import CommentCard from "@/components/CommentCard.vue";
 import CommentEditModal from "@/components/CommentEditModal.vue";
+import { useUserStore } from "@/store/userStore.ts";
 
 export default {
     components: {
@@ -64,6 +66,9 @@ export default {
             const viewable = this.comments.filter(comment => comment.reply_to === null) as NestedArticleComment[]
             viewable.forEach(comment => { comment.replies = this.buildCommentTree(comment) })
             return viewable
+        },
+        loggedIn(): boolean {
+            return useUserStore().user !== null
         }
     },
     methods: {
