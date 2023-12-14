@@ -157,6 +157,9 @@ def serialize_user(user: User, request: HttpRequest):
         settings.MEDIA_URL + str(user.profile_image)
     ) if user.profile_image else None
 
+    if request.is_secure() and profile_url and profile_url.startswith('http://'):
+        profile_url = profile_url.replace('http://', 'https://')
+
     return {
         'id': user.id,
         'username': user.username,
