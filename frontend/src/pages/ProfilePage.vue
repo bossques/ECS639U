@@ -1,103 +1,141 @@
 <template>
-    <div class="container col-sm-6">
-        <div v-if="saved" class="alert alert-success" role="alert">
-            Your changes have been saved.
+    <div class="row col-sm-12">
+        <div class="col-sm-6 offset-sm-1" @drop.prevent="onDrop">
+            <div v-if="saved" class="alert alert-success" role="alert">
+                Your changes have been saved.
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <h5 class="px-3">Your Profile</h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Profile Picture:</label>
+                        <div class="text-center p-2 border">
+                            <img v-if="profileUrl" :src="profileUrl" alt="Profile Image" class="img-fluid col-sm-4"/>
+                        </div>
+                        <input type="file" alt="Profile Image" class="form-control-file" accept="image/*" @change="onFileChange"/>
+                    </div>
+                    <Error :error-messages="formErrors?.profile_image"/>
+
+                    <div class="form-group">
+                        <label>Email Address:</label>
+                        <input type="email" v-model="form.email" class="form-control">
+                    </div>
+                    <Error :error-messages="formErrors?.email"/>
+
+                    <div class="form-group">
+                        <label>Date Of Birth:</label>
+                        <input type="date" v-model="form.dateOfBirth" class="form-control">
+                    </div>
+                    <Error :error-messages="formErrors?.date_of_birth"/>
+                </div>
+
+                <div class="card-footer">
+                    <input type="submit" class="btn btn-success w-100" value="Save" @click="onSubmit" />
+                </div>
+            </div>
         </div>
 
-        <form class="card" @submit.prevent="onSubmit" @dragover.prevent="(event: DragEvent) => { event.preventDefault() }" @drop.prevent="onDrop">
+        <div class="offset-sm-1 col-sm-3 card">
+            <div class="card-title">
+                <h5 class="px-3">Your Favourite Categories</h5>
+            </div>
+
             <div class="card-body">
-                <div class="form-group p-2">
-                    <label>Profile Picture:</label>
-
-                    <div class="text-center rounded p-2">
-                        <img v-if="profileUrl" :src="profileUrl" alt="Profile Image" @click="onProfileClick" class="img-fluid col-sm-4">
-                    </div>
-                    <input type="file" @change="onFileChange" alt="Profile Image" class="form-control-file" accept="image/*" ref="fileInputRef">
+                <div v-for="category in categories" :key="category.id" class="form-check form-switch">
+                    <input
+                        type="checkbox"
+                        class="form-check-input"
+                        :value="category.id"
+                        :checked="category.enabled"
+                        @click.prevent="onCategoryToggle(category)" />
+                    <label>{{ category.name }}</label>
                 </div>
-                <Error :error-messages="errors?.profile_image"/>
-
-                <div class="form-group p-2">
-                    <label>Email Address:</label>
-                    <input type="email" v-model="form.email" class="form-control">
-                </div>
-                <Error :error-messages="errors?.email"/>
-
-                <div class="form-group p-2">
-                    <label>Date Of Birth:</label>
-                    <input type="date" v-model="form.dateOfBirth" class="form-control">
-                </div>
-                <Error :error-messages="errors?.date_of_birth"/>
             </div>
-
-            <div class="card-footer">
-                <input type="submit" class="btn btn-success w-100" value="Save" />
-            </div>
-        </form>
+        </div>
     </div>
 </template>
 
-<script setup lang="ts">
-import { Ref, ref } from "vue";
-import { BadRequestError, useUserStore } from "@/store/userStore";
-import type { BadRequestResponse } from "@/types.ts";
+<script lang="ts">
+import { defineComponent, ref } from "vue";
+import { useArticleStore } from "@/store/articles.ts";
+import { BadRequestError, useUserStore } from "@/store/userStore.ts";
+import { ArticleCategory, BadRequestResponse } from "@/types.ts";
 import Error from "@/components/Error.vue";
-const userStore = useUserStore();
-const profileUrl = ref(userStore.user?.profile_url ?? null)
-const fileInputRef = ref<HTMLInputElement | null>(null);
-const errors = ref<BadRequestResponse>({});
-const saved = ref<boolean>(false);
 
-interface Form {
-    profileImage: File | null;
-    email: string;
-    dateOfBirth: string;
-}
+type ExtendedArticleCategory = ArticleCategory & { enabled: boolean; }
+type Form = { profileImage: File | null, email: string, dateOfBirth: string }
 
-const form: Ref<Form> = ref({
-    profileImage: null,
-    email: userStore.user?.email ?? '',
-    dateOfBirth: userStore.user?.date_of_birth ?? ''
-})
+export default defineComponent({
+    components: {
+        Error
+    },
+    setup() {
+        const userStore = useUserStore()
 
-const onFileChange = (event: Event) => {
-    const target = event.target as HTMLInputElement
-    if (target.files && target.files.length > 0) {
-        form.value.profileImage = target.files[0];
-        profileUrl.value = URL.createObjectURL(form.value.profileImage)
-    }
-}
+        const form = ref<Form>({
+            profileImage: null,
+            email: userStore.user?.email ?? '',
+            dateOfBirth: userStore.user?.date_of_birth ?? ''
+        })
+        const formErrors = ref<BadRequestResponse>({})
+        const profileUrl = ref(userStore.user?.profile_url ?? null)
+        const saved = ref(false);
 
-const onProfileClick = () => {
-    if (fileInputRef.value) {
-        fileInputRef.value.click();
-    }
-}
-
-const onDrop = (event: DragEvent) => {
-    event.preventDefault()
-    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-        form.value.profileImage = event.dataTransfer.files[0]
-        profileUrl.value = URL.createObjectURL(form.value.profileImage)
-    }
-}
-
-const onSubmit = async () => {
-    errors.value = {}
-    try {
-        await userStore.modify(
-            form.value.email,
-            form.value.dateOfBirth,
-            form.value.profileImage
-        )
-        saved.value = true;
-    } catch (e) {
-        saved.value = false;
-        if (e instanceof BadRequestError) {
-            errors.value = JSON.parse(e.message)
-            return
+        return {
+            form,
+            formErrors,
+            profileUrl,
+            saved
         }
-        throw e
+    },
+    computed: {
+        categories(): ExtendedArticleCategory[] {
+            const userStore = useUserStore()
+            const favouriteCategories = userStore?.user?.favourite_categories
+
+            return useArticleStore().categories.map(category => ({
+                ...category,
+                enabled: favouriteCategories?.some(c => c.id === category.id) ?? false
+            }))
+        }
+    },
+    methods: {
+        onCategoryToggle(category: ArticleCategory) {
+            useUserStore().toggleCategory(category)
+        },
+        onDrop(event: DragEvent) {
+            if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+                this.form.profileImage = event.dataTransfer.files[0]
+                this.profileUrl = URL.createObjectURL(this.form.profileImage)
+            }
+        },
+        onFileChange(event: Event) {
+            const target = event.target as HTMLInputElement
+            if (target.files && target.files.length > 0) {
+                this.form.profileImage = target.files[0]
+                this.profileUrl = URL.createObjectURL(this.form.profileImage)
+            }
+        },
+        async onSubmit() {
+            this.formErrors = {}
+
+            try {
+                await useUserStore().modify(this.form.email, this.form.dateOfBirth, this.form.profileImage)
+                this.saved = true
+            } catch (e) {
+                this.saved = false
+                if (e instanceof BadRequestError) {
+                    this.formErrors = JSON.parse(e.message)
+                    return
+                }
+                throw e
+            }
+        }
     }
-}
+})
 
 </script>

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import type { BadRequestResponse, User } from "@/types.ts";
+import type {ArticleCategory, BadRequestResponse, User} from "@/types.ts";
+import { getHeaders } from "@/utils.ts";
 
 export const useUserStore = defineStore('user', {
     state: () => {
@@ -15,12 +16,7 @@ export const useUserStore = defineStore('user', {
             }
         },
         async modify(email: string, dateOfBirth: string, profileImage: File | null) {
-            // if csrf token is found in cookies, add to header
-            const headers: Record<string, string> = {};
-            const token = getCookie('csrftoken')
-            if (token !== undefined) {
-                headers['X-CSRFToken'] = token;
-            }
+            const headers = getHeaders()
 
             const formData = new FormData()
             formData.append('email', email)
@@ -42,13 +38,20 @@ export const useUserStore = defineStore('user', {
                 throw new BadRequestError(json)
             }
         },
-        async logout() {
-            // if csrf token is found in cookies, add to header
-            const headers: Record<string, string> = {};
-            const token = getCookie('csrftoken')
-            if (token !== undefined) {
-                headers['X-CSRFToken'] = token;
+        async toggleCategory(category: ArticleCategory) {
+            const headers = getHeaders()
+
+            const response = await fetch(`http://127.0.0.1:8000/api/profile/categories/${category.id}/`, {
+                'method': 'PUT',
+                'headers': headers
+            })
+
+            if (response.ok) {
+                this.user = await response.json()
             }
+        },
+        async logout() {
+            const headers = getHeaders()
 
             const response = await fetch('http://127.0.0.1:8000/auth/logout/', {
                 'method': 'POST',
@@ -70,13 +73,4 @@ export class BadRequestError extends Error {
         this.name = "BadRequestError"
         this.errors = errors
     }
-}
-
-function getCookie(name: string): string | undefined {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-        return parts.pop()?.split(';').shift()?.trim();
-    }
-    return undefined;
 }

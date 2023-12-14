@@ -15,12 +15,17 @@ Including another URLconf
 """
 from django.urls import path
 
-from .views import main_spa, login_view, register_view, logout_view, profile_view
+from .views import main_spa, login_view, register_view, logout_view, profile_view, articles_view, article_view, category_view, comments_view, comment_view
 
 urlpatterns = [
     path('', main_spa, name='home'),
     path('auth/login/', login_view, name='login'),
     path('auth/register/', register_view, name='register'),
     path('auth/logout/', logout_view, name='logout'),
-    path('api/profile/', profile_view, name='profile')
+    path('api/profile/', profile_view, name='profile'),
+    path('api/profile/categories/<int:category_id>/', category_view, name='category'),
+    path('api/articles/', articles_view, name='articles'),
+    path('api/articles/<int:article_id>/', article_view, name='article'),
+    path('api/articles/<int:article_id>/comments/', comments_view, name='comments'),
+    path('api/articles/<int:article_id>/comments/<int:comment_id>/', comment_view, name='comment')
 ]

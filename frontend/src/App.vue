@@ -9,6 +9,7 @@
 import { RouterView } from "vue-router";
 import NavigationBar from "./components/NavigationBar.vue";
 import { useUserStore } from "@/store/userStore";
+import { useArticleStore } from "@/store/articles.ts";
 
 export default {
     components: {
@@ -17,7 +18,9 @@ export default {
     },
     async mounted() {
         const userStore = useUserStore()
-        await userStore.populate()
+        const articleStore = useArticleStore()
+        userStore.populate()
+        articleStore.populate()
     }
 }
 
