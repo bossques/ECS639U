@@ -32,6 +32,10 @@ export type ArticleComment = {
     article: Article
     belongs_to: User
     comment: string
-    reply_to: ArticleComment
+    reply_to?: ArticleComment
     created_at: string
+}
+
+export type NestedArticleComment = ArticleComment & {
+    replies: NestedArticleComment[]
 }

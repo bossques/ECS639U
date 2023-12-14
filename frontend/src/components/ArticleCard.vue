@@ -1,15 +1,18 @@
 <template>
-    <div v-if="article" class="card p-2 hover-effect">
+    <router-link
+        v-if="article"
+        :to="{name: 'Article Page', params: { id: article.id }}"
+        class="text-decoration-none card p-2 hover-effect">
         <div class="card-body">
-            <h4>
+            <h4 class="card-title">
                 {{ article.title }}
             </h4>
 
-            <small class="grey">
+            <small class="card-subtitle">
                 {{ formatDate(article.created_at) }}
             </small>
         </div>
-    </div>
+    </router-link>
 </template>
 
 <script lang="ts">
@@ -36,6 +39,6 @@ export default {
 }
 
 .hover-effect:hover {
-  transform: scale(1.01);
+  transform: scale(1.03);
 }
 </style>

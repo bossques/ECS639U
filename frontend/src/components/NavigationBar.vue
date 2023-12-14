@@ -31,19 +31,16 @@
 
 <script lang="ts">
 import { useUserStore } from "@/store/userStore";
-import { useRouter } from "vue-router";
 
 export default {
     data() {
         const userStore = useUserStore()
-        const router = useRouter()
 
         return {
             userStore,
-            router,
             onLogout: () => {
                 userStore.logout();
-                router.replace({'name': 'Main Page'})
+                this.$router.replace({'name': 'Main Page'})
             }
         }
     }

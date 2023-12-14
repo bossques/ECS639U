@@ -1,5 +1,5 @@
 <template>
-    <div v-for="(articles, category) in sortByCategory(articleStore.articles)">
+    <div v-for="(articles, category) in sortedArticles">
         <h3 class="p-2">{{ category }}</h3>
 
         <div class="row col-sm-12">
@@ -10,25 +10,26 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from "vue";
 import { useArticleStore } from "@/store/articles.ts";
-import ArticleCard from "@/components/ArticleCard.vue";
 import { Article } from "@/types.ts";
-const articleStore = useArticleStore()
+import ArticleCard from "@/components/ArticleCard.vue";
 
-function sortByCategory(articles: Article[]): Record<string, Article[]> {
-    const map: Record<string, Article[]> = {};
-
-    articles.forEach(article => {
-        const categoryName = article.category.name
-        if (!map[categoryName]) {
-            map[categoryName] = [];
+export default defineComponent({
+    components: {
+        ArticleCard
+    },
+    computed: {
+        sortedArticles(): Record<string, Article[]> {
+            return useArticleStore().articles.reduce((result, article) => {
+                const categoryName = article.category.name
+                result[categoryName] = [...(result[categoryName] || []), article]
+                return result
+            }, {} as Record<string, Article[]>)
         }
-        map[categoryName].push(article)
-    })
-
-    return map;
-}
+    }
+})
 
 </script>
 
