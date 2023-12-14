@@ -16,7 +16,7 @@
                         <div class="text-center profile-picture rounded border">
                             <img
                                 v-if="profileUrl"
-                                :src="getUrl() + 'media/' + profileUrl"
+                                :src="profileUrl"
                                 alt="Profile Image"
                                 class="profile-picture rounded"/>
                         </div>
@@ -87,7 +87,7 @@ export default defineComponent({
             dateOfBirth: userStore.user?.date_of_birth ?? ''
         })
         const formErrors = ref<BadRequestResponse>({})
-        const profileUrl = ref(userStore.user?.profile_image ?? null)
+        const profileUrl = ref((userStore.user?.profile_image !== undefined ? getUrl() + 'media/' + userStore.user.profile_image : null))
         const saved = ref(false);
 
         return {
@@ -109,7 +109,6 @@ export default defineComponent({
         }
     },
     methods: {
-        getUrl,
         onCategoryToggle(category: ArticleCategory) {
             useUserStore().toggleCategory(category)
         },
