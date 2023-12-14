@@ -132,3 +132,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 INTERNAL_IPS = ['127.0.0.1']
 
 AUTH_USER_MODEL = 'api.User'
+
+CSRF_TRUSTED_ORIGINS = ['https://group33-web-apps-ec21385.apps.a.comp-teach.qmul.ac.uk/']
