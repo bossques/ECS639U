@@ -6,15 +6,19 @@
             </div>
 
             <div class="card">
-                <div class="card-title">
-                    <h5 class="px-3">Your Profile</h5>
-                </div>
-
                 <div class="card-body">
+                    <div class="card-title">
+                        <h5>Your Profile</h5>
+                    </div>
+
                     <div class="form-group">
                         <label>Profile Picture:</label>
-                        <div class="text-center p-2 border">
-                            <img v-if="profileUrl" :src="profileUrl" alt="Profile Image" class="img-fluid col-sm-4"/>
+                        <div class="text-center profile-picture rounded border">
+                            <img
+                                v-if="profileUrl"
+                                :src="profileUrl"
+                                alt="Profile Image"
+                                class="profile-picture rounded"/>
                         </div>
                         <input type="file" alt="Profile Image" class="form-control-file" accept="image/*" @change="onFileChange"/>
                     </div>
@@ -40,11 +44,11 @@
         </div>
 
         <div class="offset-sm-1 col-sm-3 card">
-            <div class="card-title">
-                <h5 class="px-3">Your Favourite Categories</h5>
-            </div>
-
             <div class="card-body">
+                <div class="card-title">
+                    <h5>Your Favourite Categories</h5>
+                </div>
+
                 <div v-for="category in categories" :key="category.id" class="form-check form-switch">
                     <input
                         type="checkbox"
@@ -139,3 +143,12 @@ export default defineComponent({
 })
 
 </script>
+
+<style scoped>
+.profile-picture {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}
+
+</style>

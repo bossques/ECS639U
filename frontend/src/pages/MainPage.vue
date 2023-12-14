@@ -1,6 +1,11 @@
 <template>
-    <div v-for="(articles, category) in sortedArticles">
-        <h3 class="p-2">{{ category }}</h3>
+    <div class="card py-2">
+        <h2 v-if="loggedIn">Your News</h2>
+        <h2 v-else>News</h2>
+    </div>
+
+    <div v-for="(articles, category) in sortedArticles" class="py-3">
+        <h3>{{ category }}</h3>
 
         <div class="row col-sm-12">
             <div v-for="article in articles" class="col-sm-3">
@@ -13,6 +18,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useArticleStore } from "@/store/articles.ts";
+import { useUserStore } from "@/store/userStore.ts";
 import { Article } from "@/types.ts";
 import ArticleCard from "@/components/ArticleCard.vue";
 
@@ -22,11 +28,24 @@ export default defineComponent({
     },
     computed: {
         sortedArticles(): Record<string, Article[]> {
-            return useArticleStore().articles.reduce((result, article) => {
+            let articles = useArticleStore().articles
+            const user = useUserStore().user
+
+            // filter articles by user favourites
+            if (user !== null) {
+                const categories = user.favourite_categories.map(category => category.id)
+                articles = articles.filter(article => categories.includes(article.category.id))
+            }
+
+            // sort by categories
+            return articles.reduce((result, article) => {
                 const categoryName = article.category.name
                 result[categoryName] = [...(result[categoryName] || []), article]
                 return result
             }, {} as Record<string, Article[]>)
+        },
+        loggedIn() {
+            return useUserStore().user !== null
         }
     }
 })
