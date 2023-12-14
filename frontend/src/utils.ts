@@ -23,6 +23,6 @@ export function getHeaders(): Record<string, string> {
 }
 
 export function getUrl() {
-    return window.location.toString()
+    return window.location.origin.toString() + '/'
 }
 
