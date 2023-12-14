@@ -9,8 +9,8 @@
                 <li class="nav-item">
                     <router-link class="nav-link" :to="{name: 'Main Page'}">Home</router-link>
                 </li>
-                <li class="nav-item">
-                    <router-link class="nav-link" :to="{name: 'Other Page'}">Other</router-link>
+                <li class="nav-item" v-if="userStore.user !== null">
+                    <router-link class="nav-link" :to="{name: 'Other Page'}">All</router-link>
                 </li>
             </ul>
 
