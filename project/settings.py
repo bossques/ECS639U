@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -134,3 +136,4 @@ INTERNAL_IPS = ['127.0.0.1']
 AUTH_USER_MODEL = 'api.User'
 
 CSRF_TRUSTED_ORIGINS = ['https://group33-web-apps-ec21385.apps.a.comp-teach.qmul.ac.uk']
+CORS_ALLOWED_ORIGINS = ['https://group33-web-apps-ec21385.apps.a.comp-teach.qmul.ac.uk']
