@@ -19,9 +19,24 @@ from django.urls import include, path
 from django.http import HttpResponse
 from django.conf.urls.static import static
 
+# serve static files
+import re
+from django.urls import re_path
+from django.views.static import serve
+
+media = [
+    re_path(
+        r"^%s(?P<path>.*)$" % re.escape(settings.MEDIA_URL.lstrip("/")),
+        serve,
+        kwargs={'document_root': settings.MEDIA_ROOT}
+    )
+]
+
 
 urlpatterns = [
     path('', include('api.urls')),
     path('health', lambda request: HttpResponse("OK")),
     path('admin/', admin.site.urls),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + media
+
+
