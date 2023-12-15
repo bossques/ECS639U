@@ -3,11 +3,11 @@
         <h2>All News</h2>
     </div>
 
-    <div v-for="(articles, category) in sortedArticles" class="py-3">
+    <div v-for="(articles, category) in sortedArticles" class="py-3" :key="category">
         <h3>{{ category }}</h3>
 
         <div class="row col-sm-12">
-            <div v-for="article in articles" class="col-sm-3">
+            <div v-for="article in articles" class="col-sm-3" :key="article.id">
                 <ArticleCard :article="article" />
             </div>
         </div>

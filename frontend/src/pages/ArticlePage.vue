@@ -16,7 +16,7 @@
             v-if="loggedIn" />
     </div>
 
-    <div v-for="comment in viewableComments" v-if="!isLoading">
+    <div v-for="comment in viewableComments" v-if="!isLoading" :key="comment.id">
         <CommentCard :comment="comment" @delete="deleteComment" @edit="onEdit" @reply="onReply" />
     </div>
     <div v-else>

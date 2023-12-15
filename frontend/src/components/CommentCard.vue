@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <div v-if="renderReplies && displayReplies" v-for="reply in replies" class="ps-4">
+    <div v-if="renderReplies && displayReplies" v-for="reply in replies" class="ps-4" :key="reply.id">
         <!-- forward events -->
         <CommentCard
             :comment="reply"
