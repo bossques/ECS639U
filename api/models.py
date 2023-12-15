@@ -34,7 +34,7 @@ class User(AbstractUser):
 class Article(models.Model):
     category = models.ForeignKey(ArticleCategory, on_delete=models.CASCADE)
     title = models.CharField(null=False, max_length=256)
-    contents = models.CharField(null=False, max_length=2048)
+    contents = models.CharField(null=False, max_length=4096)
     created_at = models.DateTimeField(default=now)
 
     def to_dict(self):
