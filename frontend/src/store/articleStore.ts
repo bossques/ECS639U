@@ -14,12 +14,12 @@ export const useArticleStore = defineStore('article', {
         async populate() {
             this.isLoading = true;
             const response = await fetch(getUrl() + 'api/articles/')
-            this.isLoading = false;
             if (response.ok) {
                 const json = await response.json()
                 this.articles = json['articles']
                 this.categories = json['categories']
             }
+            this.isLoading = false;
         }
     }
 })
