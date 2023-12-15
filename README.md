@@ -4,10 +4,9 @@ This template should be used as the starting point for your group coursework in 
 
 ## Important 
 
-The database is not included in this git repository, to see the populated project with the test users, articles and comments, visit the URL below
-https://group33-web-apps-ec21385.apps.a.comp-teach.qmul.ac.uk/
+The database is excluded from this Git repository. To see the populated project, complete with test users, articles, and comments, please visit the deployment URL. If you want to build the project on your machine, you can follow the provided instructions under `Local development`.
 
-## URL (Openshift)
+## Deployment URL (Openshift)
 
 https://group33-web-apps-ec21385.apps.a.comp-teach.qmul.ac.uk/
 
@@ -55,25 +54,31 @@ To run this project in your development machine, follow these steps:
     $ pip install -r requirements.txt
     ```
 
-4. Create a development database:
+4. Collect static files
+
+    ```console
+    $ python manage.py collectstatic
+    ```
+
+5. Create a development database:
 
     ```console
     $ python manage.py migrate
     ```
 
-5. Install JavaScript dependencies (from 'frontend' folder):
+6. Install JavaScript dependencies (from 'frontend' folder):
 
     ```console
     $ npm install
     ```
 
-6. If everything is alright, you should be able to start the Django development server from the main folder:
+7. If everything is alright, you should be able to start the Django development server from the main folder:
 
     ```console
     $ python manage.py runserver
     ```
 
-7. and the Vue server from the 'frontend' sub-folder:
+8. and the Vue server from the 'frontend' sub-folder:
 
     ```console
     $ npm run dev
