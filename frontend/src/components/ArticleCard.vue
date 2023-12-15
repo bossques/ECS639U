@@ -23,7 +23,7 @@ export default {
         article: Object as () => Article
     },
     methods: {
-        formatDate(datetimeString: string) {
+        formatDate(datetimeString: string): string {
             const datetime = new Date(datetimeString)
             const options: Intl.DateTimeFormatOptions = {year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'}
 

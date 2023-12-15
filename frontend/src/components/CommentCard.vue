@@ -92,13 +92,13 @@ export default {
         }
     },
     computed: {
-        canModify() {
+        canModify(): boolean {
             return useUserStore().user?.id === this.comment?.belongs_to?.id
         },
-        canReply() {
+        canReply(): boolean {
             return useUserStore().user !== null
         },
-        replies() {
+        replies(): NestedArticleComment[] {
             if (this.comment !== undefined && 'replies' in this.comment) {
                 return this.comment.replies
             }
@@ -107,7 +107,7 @@ export default {
     },
     methods: {
         getUrl,
-        formatDate(datetimeString: string) {
+        formatDate(datetimeString: string): string {
             const datetime = new Date(datetimeString)
             const options: Intl.DateTimeFormatOptions = {year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'}
 

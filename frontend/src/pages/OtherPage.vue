@@ -12,6 +12,10 @@
             </div>
         </div>
     </div>
+
+    <div v-if="isLoading">
+        <p>Loading...</p>
+    </div>
 </template>
   
 <script lang="ts">
@@ -34,6 +38,9 @@ export default defineComponent({
                 result[categoryName] = [...(result[categoryName] || []), article]
                 return result
             }, {} as Record<string, Article[]>)
+        },
+        isLoading(): boolean {
+            return useArticleStore().isLoading
         }
     }
 })

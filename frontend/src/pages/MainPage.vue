@@ -13,6 +13,9 @@
             </div>
         </div>
     </div>
+    <div v-if="isLoading">
+        <p>Loading...</p>
+    </div>
 </template>
 
 <script lang="ts">
@@ -44,8 +47,11 @@ export default defineComponent({
                 return result
             }, {} as Record<string, Article[]>)
         },
-        loggedIn() {
+        loggedIn(): boolean {
             return useUserStore().user !== null
+        },
+        isLoading(): boolean {
+            return useArticleStore().isLoading
         }
     }
 })
