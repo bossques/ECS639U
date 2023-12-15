@@ -2,6 +2,11 @@
 
 This template should be used as the starting point for your group coursework in the module ECS639U Web Programming (at Queen Mary University of London). Use Git (github.qmul.ac.uk) to collaborate on the coursework with your group members. Module leader: Paulo Oliva <[p.oliva@qmul.ac.uk](mailto:p.oliva@qmul.ac.uk)>
 
+## Important 
+
+The database is not included in this git repository, to see the populated project with the test users, articles and comments, visit the URL below
+https://group33-web-apps-ec21385.apps.a.comp-teach.qmul.ac.uk/
+
 ## URL (Openshift)
 
 https://group33-web-apps-ec21385.apps.a.comp-teach.qmul.ac.uk/
